@@ -9,13 +9,13 @@ export class mongoCilent {
 	private Connectton: boolean;
 	private ConnectNumber: number;
 	private MongoUrl: string;
-	private cooldown: Map<string, number>;
+	private cooldown: number;
 	private CDdalay: number;
 	private ModlePath: string;
 
 	constructor(MongoUrl: string, ModlePath: string, dalay?: number) {
 		this.Data = new Map();
-		this.cooldown = new Map();
+		this.cooldown = new Date().getTime();
 		this.Connectton = false;
 		this.ConnectNumber = 0;
 		this.CDdalay = dalay || 30;
@@ -75,18 +75,15 @@ export class mongoCilent {
 		} else if (this.ConnectNumber > 0) {
 			const now = new Date().getTime();
 			const amount = this.CDdalay * 1000;
-			const last: number | undefined = this.cooldown.get("mongodb");
 
-			if (last) {
-				const expirationTime = last + amount;
+			const expirationTime = this.cooldown + amount;
 
-				if (now < expirationTime) {
-					const timeLeft = (expirationTime - now) / 1000;
+			if (now < expirationTime) {
+				const timeLeft = (expirationTime - now) / 1000;
 
-					console.log(`Reconnecting in ${timeLeft} seconds`);
-					this.ConnectNumber++;
-					return;
-				}
+				console.log(`Reconnecting in ${timeLeft} seconds`);
+				this.ConnectNumber++;
+				return;
 			}
 
 			if (!this.Connectton) {
@@ -100,11 +97,7 @@ export class mongoCilent {
 					});
 			}
 
-			this.cooldown.set("mongo", now);
-
-			setTimeout(async () => {
-				this.cooldown.delete("mongo");
-			}, amount);
+			this.cooldown = now;
 		}
 		this.ConnectNumber += 1;
 	}
