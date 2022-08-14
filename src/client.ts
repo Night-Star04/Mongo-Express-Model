@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import fs from "fs";
 import type { Models, ConnectOptions } from "mongoose";
 
-export class mongoCilent {
+export class Cilent {
 	public Monogoose = mongoose;
-	public Data: Map<string, Models>;
+	public data: Map<string, Models>;
 
 	private Connectton: boolean;
 	private ConnectNumber: number;
@@ -14,7 +14,7 @@ export class mongoCilent {
 	private ModlePath: string;
 
 	constructor(MongoUrl: string, ModlePath: string, dalay?: number) {
-		this.Data = new Map();
+		this.data = new Map();
 		this.cooldown = new Date().getTime();
 		this.Connectton = false;
 		this.ConnectNumber = 0;
@@ -37,7 +37,7 @@ export class mongoCilent {
 			if (typeof Name !== "string")
 				throw new Error("ModleName is not a string");
 
-			this.Data.set(Name, Models);
+			this.data.set(Name, Models);
 		}
 	}
 
